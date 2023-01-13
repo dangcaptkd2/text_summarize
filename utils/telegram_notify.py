@@ -8,7 +8,7 @@ proxies = {
 
 def telegram_bot_sendtext(bot_message, bot_chatID="-874978660"):
     try:
-        bot_token = "5848101456:AAFnyhsbN1r68F-h3NfP1sVoYJ1yblcvvUY"
+        bot_token = ""
         bot_message = bot_message.replace("_", "\\_")
         command = (
             "https://api.telegram.org/bot"
