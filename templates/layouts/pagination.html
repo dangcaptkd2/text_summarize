@@ -1,0 +1,23 @@
+<nav aria-label="Page navigation example">
+    <ul class="pagination">        
+        {% if pagination.start > 1 %}      
+            <li class="page-item">
+                <a class="page-link" href="{{pathname}}?page=1&folder={{folder}}&date={{date}}">1...</a>
+            </li>  
+        {% endif %}    
+        {% for page in pagination.pages %}                
+            {% if paging != page %}            
+            <li class="page-item">
+                <a class="page-link" href="{{pathname}}?page={{page}}&folder={{folder}}&date={{date}}">{{page}}</a>
+            </li>
+            {% else %}
+            <li class="page-item active"><a class="page-link">{{page}}</a></li>            
+            {% endif %}
+        {% endfor %}
+        {% if pagination.end < pagination.total %}
+            <li class="page-item">
+                <a class="page-link" href="{{pathname}}?page={{pagination.total}}&folder={{folder}}&date={{date}}">...{{pagination.total}}</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>

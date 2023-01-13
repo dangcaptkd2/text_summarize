@@ -1,0 +1,78 @@
+{% extends "layouts/master.html" %}
+
+{% block main %}
+<div class="container">
+	<form action="/podcast/summarization_by_url" method="post" id="PostWebUrl">
+		<input type="input" name="url" style="width:100%" value="https://vnexpress.net/gian-truan-tim-vu-khi-cuu-benh-nhan-4499897.html" />
+		<button type="submit">Submit</button>
+	</form>
+    Or
+    <form action="/podcast/summarization_by_document" method="post" id="PostWebContent">
+		<textarea type="input" name="content" style="width:100%"></textarea>
+		<button type="submit">Submit</button>
+	</form>
+	<div id="results"></div>
+</div>
+
+
+<br />
+<footer class="small text-center text-muted">
+	Fpt Online Dev
+</footer>
+{% endblock %}
+
+{% block javascript %}
+<style type="text/css">
+	#results img {
+		display: block;
+	}
+
+	.card.face-same {
+		border-color: red;
+	}
+</style>
+<script>
+	function display_in_result(resp) {
+		const RET = $('#results');
+		RET.empty()
+		RET.append('<div></div>');
+
+		if (resp instanceof Object && resp.error == 0) {
+			RET.append(`<h4>summarize_text</h4><div>${resp.summarize_text}</div>`);
+			RET.append(`<h4>input_text</h4><div>${resp.input_text.join('. ')}</div>`);
+		}
+	}
+	// -->	
+
+	$('#PostWebUrl').on('submit', (function (e) {
+		e.preventDefault();
+		const RET = $('#results');
+		RET.empty()
+		const formData = $(e.target).serialize();
+		console.log('submit', formData);
+		$.ajax({
+			type: 'POST',
+			url: $(this).attr('action'),
+			data: formData,
+			success: function (resp) {
+				display_in_result(resp);
+			}
+		});
+	}));
+    $('#PostWebContent').on('submit', (function (e) {
+		e.preventDefault();
+		const RET = $('#results');
+		RET.empty()
+		const formData = $(e.target).serialize();
+		console.log('submit', formData);
+		$.ajax({
+			type: 'POST',
+			url: $(this).attr('action'),
+			data: formData,
+			success: function (resp) {
+				display_in_result(resp);
+			}
+		});
+	}));
+</script>
+{% endblock %}

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta property="og:title" content="Tóm tắt văn bản">
+	<meta name="description" content="Tóm tắt văn bản">
+	<meta name="author" content="">
+	<title>Kiểm tra similarity</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	
+	
+	<style type="text/css">
+		.aaa_tooltip {
+			position: relative;
+			display: inline-block;
+			border-bottom: 1px dotted black;
+			color: red;
+		}
+
+		.aaa_tooltip .tooltiptext {
+			visibility: hidden;
+			background-color: black;
+			color: #fff;
+			text-align: center;
+			border-radius: 6px;
+			padding: 5px;
+			position: absolute;
+			z-index: 1;
+			top: 100%;
+			left: 50%;
+			min-width: 60px;
+			margin-left: 0px;
+		}
+
+		.aaa_tooltip:hover .tooltiptext {
+			visibility: visible;
+		}
+		.two-col {
+    		overflow: hidden;/* Makes this div contain its floats */
+		}
+
+		.two-col .col1,
+		.two-col .col2 {
+			width: 49%;
+		}
+
+		.two-col .col1 {
+			float: left;
+		}
+
+		.two-col .col2 {
+			float: right;
+		}
+
+		.two-col label {
+			display: block;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="wrapper">
+	</div>
+	<div id="page-wrapper">
+		<div class="container-fluid">
+			<h1>
+				<a href="#">
+					<i class="glyphicon glyphicon-home" style="font-size: 30px"></i>
+				</a>Tóm tắt văn bản tiếng Việt
+			</h1>
+			<hr />
+			<form style="text-align: left">
+				<div class="form-group">
+					<div class="two-col">
+						<div class="col1">
+							<label for="input_text">Input (url hoặc document)</label>
+							<textarea id="input_id" class="form-control" rows="5"></textarea>
+						</div>
+						<div class="col2">
+							<label for="output_text">Output with dynamic min-max length</label>
+							<textarea id="output_id1" class="form-control" rows="10"></textarea>
+							<div class="row">
+								<div class="col col-md-6">
+									<div class="panel panel-default">
+										<div class="panel-heading">Parameters: <span id="spanErrorCount1"></span></div>	
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="two-col">
+						<div class="col1">
+							<label for="input_text">Min length</label>
+							<textarea id="minlength_id0" class="form-control" rows="1"></textarea>
+
+							<label for="input_text">Max length</label>
+							<textarea id="maxlength_id0" class="form-control" rows="1"></textarea>
+						</div>
+						<div class="col2">
+							<label for="input_text">Output with constant min-max length</label>
+							<textarea id="output_id2" class="form-control" rows="10"></textarea>
+							<div class="row">
+								<div class="col col-md-6">
+									<div class="panel panel-default">
+										<div class="panel-heading">Parameters: <span id="spanErrorCount2"></span></div>	
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div>
+					<button id="btnCheckSpelling" type="button" class="btn btn-primary">
+						<span class="glyphicon glyphicon-search spanFind" aria-hidden="true"></span> Kiểm tra
+						<span class="spanFinding" style="display: none">
+							<image src="https://stdemo.eclick.vn/chinhta/searching.gif" style="width: 32px" />
+						</span>
+					</button>
+				</div>
+			</form>
+		</div>
+		<div class="container-fluid">
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function () {
+            const demo_page = function (e) {
+				const sent_data = {
+					"input": $("#input_id").val(),
+					"min_length": $("#minlength_id0").val(),
+					"max_length": $("#maxlength_id0").val()
+				};		
+				$(".spanFinding").show();
+
+				$.ajax({
+					url: '/podcast/testv2',
+					type: 'post',
+					data: sent_data,
+					dataType: "json",
+					cache: false,
+					success: function (response) {						
+						$("#output_id1").empty();
+						$("#output_id2").empty();
+						$("#spanErrorCount1").empty();
+						$("#spanErrorCount2").empty();
+						
+						response = response['data'];
+						summary_constant = response['summary_constant']
+						summary_dynamic = response['summary_dynamic']
+						min_constant = response['min_constant']
+						max_constant = response['max_constant']
+						min_dynamic = response['min_dynamic']
+						max_dynamic = response['max_dynamic']
+						
+						$("#output_id1").html(summary_dynamic);
+						$("#spanErrorCount1").html("Min length: <code>" + min_dynamic + "</code>, Max length: <code>" + max_dynamic + "</code>");
+
+						$("#output_id2").html(summary_constant);
+						$("#spanErrorCount2").html("Min length: <code>" + min_constant + "</code>, Max length: <code>" + max_constant + "</code>");
+
+
+						
+						$(".spanFinding").hide();
+					},
+				}).fail(function (jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown);
+				});
+			};
+
+			$("#btnCheckSpelling").click(() => {
+				demo_page();
+			});
+		});
+	</script>
+</body>
+
+</html>

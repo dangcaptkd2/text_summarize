@@ -1,0 +1,11 @@
+torch
+datasets
+transformers
+apache-airflow
+nltk
+py_vncorenlp
+pandas
+numpy
+tqdm
+absl-py
+rouge-score
